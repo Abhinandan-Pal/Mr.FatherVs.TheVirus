@@ -5,6 +5,7 @@ Created on Tue Apr  7 18:28:41 2020
 
 @author: ap
 """
+import matplotlib.pyplot as plt
 from typing import NamedTuple
 import random
 
@@ -30,8 +31,8 @@ class Country(NamedTuple):
     info_accuracy  : float
     export_v : list
     import_v : list
-    infected: int
-    dead: int
+    infected : int
+    dead : int
     recovered : int
     
     population_arr : list
@@ -42,6 +43,8 @@ class Country(NamedTuple):
 
 player_index = -1
 data_accuracy_value = 0.25
+#---------------------xxxxxxxxxxxxxxx-----------------------------------
+#------------------------GAME STATE-------------------------------------
 #---------------------xxxxxxxxxxxxxxx-----------------------------------
 def generate_country(no_of_countries):
     population = random.randint(population_lower, population_upper)
@@ -74,6 +77,60 @@ def choose_country():
     for i in range(no_of_countries):
         print("COUNTRY "+ str(i)+"\n")
         print(str(Countries_data[i])+"\n\n")
-    player_index = input("Choose Your Prefered Country : ")
+    player_index = int(input("Choose Your Prefered Country : "))
     
+def plot(x,label_y,is_mine,title):
+    if(not is_mine):
+        for i in range(len(x)):
+            x[i] = x[i]*(random.randint(-int(data_accuracy_value*100),int(data_accuracy_value*100))/100+1)
+            
+    plt.figure(figsize=(len(x), 5))
+    plt.plot(x)
+    plt.xlabel("Days")
+    plt.ylabel(label_y)
+    plt.title(title)
+    plt.show()
+
+def change_param():
+    print('5')
+
+def country_update():
+    print('5')
+    
+def data_country_view(country,is_mine,name):
+    factor = 1
+    if(not is_mine):
+        factor = (random.randint(-int(data_accuracy_value*100),int(data_accuracy_value*100))/100+1)
+    print("population : ",str(country.population*factor)+"\n")
+    print("hygine_value : ",str(country.hygine_value*factor)+"\n")
+    print("money : ",str(country.money*factor)+"\n")
+    print("Public Support Index : ",str(country.support*factor)+"\n")
+    print("Socialization Index : ",str(country.socialization*factor)+"\n")
+    print("Infected by diesease : ",str(country.infected*factor)+"\n")
+    print("Death by diesease : ",str(country.dead*factor)+"\n")
+    print("Recovered from diesease : ",str(country.recovered*factor)+"\n")
+    plot(country.population_arr,"Population",is_mine,name)
+    plot(country.money_arr,"Money",is_mine,name)
+    plot(country.infected_arr,"Infected",is_mine,name)
+    plot(country.dead_arr,"Dead",is_mine,name)
+    plot(country.recovered_arr,"Recovered",is_mine,name)
+    
+country = Countries_data[4]
+def view_data():
+    a = 0
+    while(a != -1):
+       print("Your Country number is " + str(player_index)+"\n")
+       print("To EXIT WRITE -1")
+       a = int(input("Enter Country number you want data of : "))
+       b = (a == int(player_index))
+       data_country_view(Countries_data[a],b,str("COUNTRY "+str(a)))
+    
+def days():
+    view_data()
+    change_param()
+    for i in range(no_of_countries):
+        country_update(Countries_data[i])
+        
+    
+        
     
