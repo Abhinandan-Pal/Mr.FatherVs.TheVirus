@@ -24,6 +24,7 @@ infect_social_relation = 0.1
 infect_hygine_relation = 0.2
 lock_support_relation = 0.3
 travel_imp_exp_val = 500000
+remove_ratio_ub = 0.2
 #---------------------xxxxxxxxxxxxxxx-----------------------------------
 
 
@@ -50,6 +51,7 @@ class Country(NamedTuple):
     productivity : float
     infectivity : float
     lock_down_ratio : float
+    dead_reco_ratio : float
     
 player_index = -1
 data_accuracy_value = 0.25
@@ -77,7 +79,8 @@ def generate_country(no_of_countries):
     productivity = random.randint(10, 50)/100
     infectivity = random.randint(0, 10)/100 + infect_social_relation*socialization - infect_hygine_relation*hygine_value
     lock_down_ratio =random.randint(50, 70)/100+ lock_support_relation*support
-    country = Country(population,hygine_value,money,support,festivity,socialization,info_accuracy,export_v,import_v,infected,dead,recovered,population_arr,money_arr,infected_arr,dead_arr,recovered_arr,productivity,infectivity,lock_down_ratio)
+    dead_reco_ratio = random.randint(20, 40)/100
+    country = Country(population,hygine_value,money,support,festivity,socialization,info_accuracy,export_v,import_v,infected,dead,recovered,population_arr,money_arr,infected_arr,dead_arr,recovered_arr,productivity,infectivity,lock_down_ratio,dead_reco_ratio)
     return country
 def big_bang():
 
@@ -115,12 +118,20 @@ def travel_effect(c1,index):
         c2.population = c2.population + c1.population*export_i*import_i/travel_imp_exp_val
         c1.infected = c1.infected - c1.infected*export_i*import_i/travel_imp_exp_val
         c2.infected = c2.infected + c1.infected*export_i*import_i/travel_imp_exp_val
-
+        
+def infect_others(c):
+    temp = c.infected * random.randint(0,remove_ratio_ub*100)/100
+    c.infected = c.infected - temp
+    ratio = c.dead_reco_ratio*(random.randint(-10,10)/100+1)
+    c.dead = c.dead + temp*ratio
+    c.recovered = c.recovered + temp*(1-ratio)
+    
 def change_param(c,index):
     c.socialization = c.socialization + fest_social_relation*c.festivity
     c.infectivity = c.infectivity + infect_social_relation*c.socialization - infect_hygine_relation*c.hygine_value
     c.money =  c.money + c.productivity*money_product_relation*c.population/population_product_relation 
     travel_effect(c,index)
+    infect_others(c)
 
 
 def country_update():
