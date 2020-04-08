@@ -135,7 +135,10 @@ def change_param(c,index):
 
 
 def country_update():
-    print('5')
+    global Countries_data,player_index
+    for i in range(no_of_countries):
+        c = Countries_data[i]
+        change_param(c,i)
     
 def data_country_view(country,is_mine,name):
     factor = 1
