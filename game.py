@@ -29,30 +29,31 @@ remove_ratio_ub = 0.2
 
 
 #------------------------PARAMETER--------------------------------------
-class Country(NamedTuple):
-    population : int
-    hygine_value : float
-    money : int
-    support : float
-    festivity : float
-    socialization : float
-    info_accuracy  : float
-    export_v : list
-    import_v : list
-    infected : int
-    dead : int
-    recovered : int
-    
-    population_arr : list
-    money_arr : list
-    infected_arr : list
-    dead_arr : list
-    recovered_arr : list
-    productivity : float
-    infectivity : float
-    lock_down_ratio : float
-    dead_reco_ratio : float
-    
+class Country(object):
+    def __init__(self,population,hygine_value,money,support,festivity,socialization,info_accuracy,export_v,import_v,infected,dead,recovered,population_arr,money_arr,infected_arr,dead_arr,recovered_arr,productivity,infectivity,lock_down_ratio,dead_reco_ratio):
+        self.population = population
+        self.hygine_value = hygine_value
+        self.money = money
+        self.support = support
+        self.festivity = festivity
+        self.socialization = socialization
+        self.info_accuracy  = info_accuracy
+        self.export_v = export_v
+        self.import_v = import_v
+        self.infected = infected
+        self.dead = dead
+        self.recovered = recovered
+            
+        self.population_arr = population_arr
+        self.money_arr = money_arr
+        self.infected_arr = infected_arr
+        self.dead_arr = dead_arr
+        self.recovered_arr = recovered_arr
+        self.productivity = productivity
+        self.infectivity = infectivity
+        self.lock_down_ratio = lock_down_ratio
+        self.dead_reco_ratio = dead_reco_ratio
+        
 player_index = -1
 data_accuracy_value = 0.25
 #---------------------xxxxxxxxxxxxxxx-----------------------------------
@@ -83,7 +84,8 @@ def generate_country(no_of_countries):
     country = Country(population,hygine_value,money,support,festivity,socialization,info_accuracy,export_v,import_v,infected,dead,recovered,population_arr,money_arr,infected_arr,dead_arr,recovered_arr,productivity,infectivity,lock_down_ratio,dead_reco_ratio)
     return country
 def big_bang():
-
+    global Countries_data
+    Countries_data = []
     for i in range(no_of_countries):
         country_temp = generate_country(no_of_countries)
         Countries_data.append(country_temp)
@@ -127,8 +129,8 @@ def infect_others(c):
     c.recovered = c.recovered + temp*(1-ratio)
     
 def change_param(c,index):
-    c.socialization = c.socialization + fest_social_relation*c.festivity
-    c.infectivity = c.infectivity + infect_social_relation*c.socialization - infect_hygine_relation*c.hygine_value
+    c.socialization = min(1,c.socialization + fest_social_relation*c.festivity)
+    c.infectivity = max(0,min(1,c.infectivity + infect_social_relation*c.socialization - infect_hygine_relation*c.hygine_value))
     c.money =  c.money + c.productivity*money_product_relation*c.population/population_product_relation 
     travel_effect(c,index)
     infect_others(c)
@@ -143,7 +145,7 @@ def country_update():
         c.infected_arr.append(c.infected)
         c.dead_arr.append(c.dead)
         c.recovered_arr.append(c.recovered)
-        c.money_arr.append(c.recovered)
+        c.money_arr.append(c.money)
     
 def data_country_view(country,is_mine,name):
     factor = 1
@@ -171,15 +173,26 @@ def view_data():
        a = int(input("Enter Country number you want data of : "))
        b = (a == int(player_index))
        data_country_view(Countries_data[a],b,str("COUNTRY "+str(a)))
+       
 def change_param_user():
     print('5') 
     
 def days():
-    view_data()
+    #view_data()
     change_param_user()
-    for i in range(no_of_countries):
-        country_update(Countries_data[i])
-        
-    
+    country_update()
+
+big_bang()  
+choose_country()  
+for i in range(10):
+    days()
+
+class N(object):
+
+    def __init__(self, ind, set, v):
+        self.ind = ind
+        self.set = set
+        self.v = v        
+con = generate_country(no_of_countries)
         
     
