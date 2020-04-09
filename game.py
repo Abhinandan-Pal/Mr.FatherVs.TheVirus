@@ -139,6 +139,11 @@ def country_update():
     for i in range(no_of_countries):
         c = Countries_data[i]
         change_param(c,i)
+        c.population_arr.append(c.population)
+        c.infected_arr.append(c.infected)
+        c.dead_arr.append(c.dead)
+        c.recovered_arr.append(c.recovered)
+        c.money_arr.append(c.recovered)
     
 def data_country_view(country,is_mine,name):
     factor = 1
@@ -166,10 +171,12 @@ def view_data():
        a = int(input("Enter Country number you want data of : "))
        b = (a == int(player_index))
        data_country_view(Countries_data[a],b,str("COUNTRY "+str(a)))
+def change_param_user():
+    print('5') 
     
 def days():
     view_data()
-    change_param()
+    change_param_user()
     for i in range(no_of_countries):
         country_update(Countries_data[i])
         
