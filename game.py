@@ -25,6 +25,8 @@ infect_hygine_relation = 0.2
 lock_support_relation = 0.3
 travel_imp_exp_val = 500000
 remove_ratio_ub = 0.2
+intial_infect_num = 100
+no_of_infected_con = 2
 #---------------------xxxxxxxxxxxxxxx-----------------------------------
 
 
@@ -83,6 +85,14 @@ def generate_country(no_of_countries):
     dead_reco_ratio = random.randint(20, 40)/100
     country = Country(population,hygine_value,money,support,festivity,socialization,info_accuracy,export_v,import_v,infected,dead,recovered,population_arr,money_arr,infected_arr,dead_arr,recovered_arr,productivity,infectivity,lock_down_ratio,dead_reco_ratio)
     return country
+
+def inital_infect():
+    for i in range(no_of_infected_con):  
+        index = random.randint(0, no_of_countries-1)
+        Countries_data[index].infected = intial_infect_num
+        Countries_data[index].population = Countries_data[index].population - intial_infect_num
+    
+    
 def big_bang():
     global Countries_data
     Countries_data = []
@@ -96,6 +106,7 @@ def choose_country():
         print("COUNTRY "+ str(i)+"\n")
         print(str(Countries_data[i])+"\n\n")
     player_index = int(input("Choose Your Prefered Country : "))
+    inital_infect()
     
 def plot(x,label_y,is_mine,title):
     if(not is_mine):
@@ -175,7 +186,7 @@ def view_data():
        data_country_view(Countries_data[a],b,str("COUNTRY "+str(a)))
        
 def change_param_user():
-    print('5') 
+    #the user makes his choices to change parameters of his country 
     
 def days():
     #view_data()
