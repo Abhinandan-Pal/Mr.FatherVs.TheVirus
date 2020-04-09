@@ -6,7 +6,7 @@ Created on Tue Apr  7 18:28:41 2020
 @author: ap
 """
 import matplotlib.pyplot as plt
-from typing import NamedTuple
+
 import random
 
 Countries_data = []
@@ -23,7 +23,7 @@ population_product_relation = 75000
 infect_social_relation = 0.1
 infect_hygine_relation = 0.2
 lock_support_relation = 0.3
-travel_imp_exp_val = 500000
+travel_imp_exp_val = 50000
 remove_ratio_ub = 0.2
 intial_infect_num = 100
 no_of_infected_con = 2
@@ -88,7 +88,9 @@ def generate_country(no_of_countries):
 
 def inital_infect():
     for i in range(no_of_infected_con):  
+        
         index = random.randint(0, no_of_countries-1)
+        print(index)
         Countries_data[index].infected = intial_infect_num
         Countries_data[index].population = Countries_data[index].population - intial_infect_num
     
@@ -127,17 +129,17 @@ def travel_effect(c1,index):
         export_i = c1.export_v[i]
         c2 = Countries_data[i]
         import_i = c2.import_v[index]
-        c1.population = c1.population - c1.population*export_i*import_i/travel_imp_exp_val
-        c2.population = c2.population + c1.population*export_i*import_i/travel_imp_exp_val
-        c1.infected = c1.infected - c1.infected*export_i*import_i/travel_imp_exp_val
-        c2.infected = c2.infected + c1.infected*export_i*import_i/travel_imp_exp_val
+        c1.population = round(c1.population - c1.population*export_i*import_i/travel_imp_exp_val)
+        c2.population = round(c2.population + c1.population*export_i*import_i/travel_imp_exp_val)
+        c1.infected = round(c1.infected - c1.infected*export_i*import_i/travel_imp_exp_val)
+        c2.infected = round(c2.infected + c1.infected*export_i*import_i/travel_imp_exp_val)
         
 def infect_others(c):
     temp = c.infected * random.randint(0,remove_ratio_ub*100)/100
-    c.infected = c.infected - temp
+    c.infected = round(c.infected - temp)
     ratio = c.dead_reco_ratio*(random.randint(-10,10)/100+1)
-    c.dead = c.dead + temp*ratio
-    c.recovered = c.recovered + temp*(1-ratio)
+    c.dead = round(c.dead + temp*ratio)
+    c.recovered = round(c.recovered + temp*(1-ratio))
     
 def change_param(c,index):
     c.socialization = min(1,c.socialization + fest_social_relation*c.festivity)
@@ -187,6 +189,7 @@ def view_data():
        
 def change_param_user():
     #the user makes his choices to change parameters of his country 
+    print('5')
     
 def days():
     #view_data()
@@ -198,12 +201,5 @@ choose_country()
 for i in range(10):
     days()
 
-class N(object):
-
-    def __init__(self, ind, set, v):
-        self.ind = ind
-        self.set = set
-        self.v = v        
-con = generate_country(no_of_countries)
         
     
