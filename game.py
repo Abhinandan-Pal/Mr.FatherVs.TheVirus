@@ -6,10 +6,11 @@ Created on Tue Apr  7 18:28:41 2020
 @author: ap
 """
 import matplotlib.pyplot as plt
-
+import math
 import random
 
 Countries_data = []
+Day = 0
 #---------------------HYPER-PARAMETER-----------------------------------
 population_upper = 10000
 population_lower =5000
@@ -129,17 +130,22 @@ def travel_effect(c1,index):
         export_i = c1.export_v[i]
         c2 = Countries_data[i]
         import_i = c2.import_v[index]
-        c1.population = round(c1.population - c1.population*export_i*import_i/travel_imp_exp_val)
-        c2.population = round(c2.population + c1.population*export_i*import_i/travel_imp_exp_val)
-        c1.infected = round(c1.infected - c1.infected*export_i*import_i/travel_imp_exp_val)
-        c2.infected = round(c2.infected + c1.infected*export_i*import_i/travel_imp_exp_val)
+        c1.population = math.ceil(c1.population - c1.population*export_i*import_i/travel_imp_exp_val)
+        c2.population = math.ceil(c2.population + c1.population*export_i*import_i/travel_imp_exp_val)
+        c1.infected = math.ceil(c1.infected - c1.infected*export_i*import_i/travel_imp_exp_val)
+        c2.infected = math.ceil(c2.infected + c1.infected*export_i*import_i/travel_imp_exp_val)
+        
+def remove(c):
+    if(Day>3):
+        temp = c.infected * random.randint(0,remove_ratio_ub*100)/100
+        c.infected = math.ceil(c.infected - temp)
+        ratio = c.dead_reco_ratio*(random.randint(-10,10)/100+1)
+        c.dead = math.ceil(c.dead + temp*ratio)
+        c.recovered = math.ceil(c.recovered + temp*(1-ratio))
         
 def infect_others(c):
-    temp = c.infected * random.randint(0,remove_ratio_ub*100)/100
-    c.infected = round(c.infected - temp)
-    ratio = c.dead_reco_ratio*(random.randint(-10,10)/100+1)
-    c.dead = round(c.dead + temp*ratio)
-    c.recovered = round(c.recovered + temp*(1-ratio))
+    c.infected =  math.ceil(c.infected + c.infectivity*c.infected)
+    c.population = math.ceil(c.population - c.infectivity*c.infected)
     
 def change_param(c,index):
     c.socialization = min(1,c.socialization + fest_social_relation*c.festivity)
@@ -147,6 +153,7 @@ def change_param(c,index):
     c.money =  c.money + c.productivity*money_product_relation*c.population/population_product_relation 
     travel_effect(c,index)
     infect_others(c)
+    remove(c)
 
 
 def country_update():
@@ -198,8 +205,10 @@ def days():
 
 big_bang()  
 choose_country()  
-for i in range(10):
+for i in range(100):
     days()
 
+# handel stop condition.
+# make sure infection never overflows
         
     
