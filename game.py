@@ -33,7 +33,7 @@ no_of_infected_con = 2
 
 #------------------------PARAMETER--------------------------------------
 class Country(object):
-    def __init__(self,population,hygine_value,money,support,festivity,socialization,info_accuracy,export_v,import_v,infected,dead,recovered,population_arr,money_arr,infected_arr,dead_arr,recovered_arr,productivity,infectivity,lock_down_ratio,dead_reco_ratio):
+    def __init__(self,population,hygine_value,money,support,festivity,socialization,info_accuracy,export_v,import_v,infected,dead,recovered,population_arr,money_arr,infected_arr,dead_arr,recovered_arr,productivity,infectivity,lock_down_ratio,dead_reco_ratio,is_country_removed):
         self.population = population
         self.hygine_value = hygine_value
         self.money = money
@@ -56,6 +56,7 @@ class Country(object):
         self.infectivity = infectivity
         self.lock_down_ratio = lock_down_ratio
         self.dead_reco_ratio = dead_reco_ratio
+        self.is_country_removed = is_country_removed
         
 player_index = -1
 data_accuracy_value = 0.25
@@ -84,7 +85,8 @@ def generate_country(no_of_countries):
     infectivity = random.randint(0, 10)/100 + infect_social_relation*socialization - infect_hygine_relation*hygine_value
     lock_down_ratio =random.randint(50, 70)/100+ lock_support_relation*support
     dead_reco_ratio = random.randint(20, 40)/100
-    country = Country(population,hygine_value,money,support,festivity,socialization,info_accuracy,export_v,import_v,infected,dead,recovered,population_arr,money_arr,infected_arr,dead_arr,recovered_arr,productivity,infectivity,lock_down_ratio,dead_reco_ratio)
+    is_country_removed = 0
+    country = Country(population,hygine_value,money,support,festivity,socialization,info_accuracy,export_v,import_v,infected,dead,recovered,population_arr,money_arr,infected_arr,dead_arr,recovered_arr,productivity,infectivity,lock_down_ratio,dead_reco_ratio,is_country_removed)
     return country
 
 def inital_infect():
@@ -124,9 +126,14 @@ def plot(x,label_y,is_mine,title):
     plt.show()
 
 def travel_effect(c1,index):
+    if(c1.population<0):
+        c1.is_country_removed = 1
+        c1.population = 0
+        return c1
     for i in range(no_of_countries):
         if (i == index):
             continue;
+        
         export_i = c1.export_v[i]
         c2 = Countries_data[i]
         import_i = c2.import_v[index]
@@ -134,6 +141,9 @@ def travel_effect(c1,index):
         c2.population = math.ceil(c2.population + c1.population*export_i*import_i/travel_imp_exp_val)
         c1.infected = math.ceil(c1.infected - c1.infected*export_i*import_i/travel_imp_exp_val)
         c2.infected = math.ceil(c2.infected + c1.infected*export_i*import_i/travel_imp_exp_val)
+    return c1
+
+            
         
 def remove(c):
     if(Day>3):
@@ -142,25 +152,34 @@ def remove(c):
         ratio = c.dead_reco_ratio*(random.randint(-10,10)/100+1)
         c.dead = math.ceil(c.dead + temp*ratio)
         c.recovered = math.ceil(c.recovered + temp*(1-ratio))
+    return c
         
 def infect_others(c):
-    c.infected =  math.ceil(c.infected + c.infectivity*c.infected)
-    c.population = math.ceil(c.population - c.infectivity*c.infected)
+    if(c.population<0):
+        c.is_country_removed = 1
+        c.population = 0
+    else:
+        c.infected =  math.ceil(c.infected + c.infectivity*c.infected)
+        c.population = math.ceil(c.population - c.infectivity*c.infected)
+    return c
     
 def change_param(c,index):
     c.socialization = min(1,c.socialization + fest_social_relation*c.festivity)
     c.infectivity = max(0,min(1,c.infectivity + infect_social_relation*c.socialization - infect_hygine_relation*c.hygine_value))
     c.money =  c.money + c.productivity*money_product_relation*c.population/population_product_relation 
-    travel_effect(c,index)
-    infect_others(c)
-    remove(c)
+    c = travel_effect(c,index)
+    c = infect_others(c)
+    c = remove(c)
+    return c
 
 
 def country_update():
     global Countries_data,player_index
     for i in range(no_of_countries):
+       
         c = Countries_data[i]
-        change_param(c,i)
+        if(c.is_country_removed == 0):
+           c =  change_param(c,i)
         c.population_arr.append(c.population)
         c.infected_arr.append(c.infected)
         c.dead_arr.append(c.dead)
@@ -196,7 +215,7 @@ def view_data():
        
 def change_param_user():
     #the user makes his choices to change parameters of his country 
-    print('5')
+    print('')
     
 def days():
     #view_data()
@@ -206,9 +225,10 @@ def days():
 big_bang()  
 choose_country()  
 for i in range(100):
+    Day = Day + 1
     days()
 
 # handel stop condition.
 # make sure infection never overflows
-        
+c = Countries_data[0]
     
