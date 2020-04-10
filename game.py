@@ -1,8 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue Apr  7 18:28:41 2020
+Created on Fri Apr 10 19:54:47 2020
 
+@author: ap
+"""
+
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Apr  7 18:28:41 2020
 @author: ap
 """
 import matplotlib.pyplot as plt
@@ -126,15 +133,9 @@ def plot(x,label_y,is_mine,title):
     plt.show()
 
 def travel_effect(c1,index):
-    if(c1.population<0):
-        print('a')
-        c1.is_country_removed = 1
-        c1.population = 0
-        return c1
     for i in range(no_of_countries):
         if (i == index):
             continue;
-        
         export_i = c1.export_v[i]
         c2 = Countries_data[i]
         import_i = c2.import_v[index]
@@ -142,9 +143,6 @@ def travel_effect(c1,index):
         c2.population = math.ceil(c2.population + c1.population*export_i*import_i/travel_imp_exp_val)
         c1.infected = math.ceil(c1.infected - c1.infected*export_i*import_i/travel_imp_exp_val)
         c2.infected = math.ceil(c2.infected + c1.infected*export_i*import_i/travel_imp_exp_val)
-    return c1
-
-            
         
 def remove(c):
     if(Day>3):
@@ -153,36 +151,30 @@ def remove(c):
         ratio = c.dead_reco_ratio*(random.randint(-10,10)/100+1)
         c.dead = math.ceil(c.dead + temp*ratio)
         c.recovered = math.ceil(c.recovered + temp*(1-ratio))
-    return c
         
 def infect_others(c):
-    if(c.population<0):
-        c.is_country_removed = 1
-        c.population = 0
-    else:
-        c.infected =  math.ceil(c.infected + c.infectivity*c.infected)
-        c.population = math.ceil(c.population - c.infectivity*c.infected)
-    return c
+    c.infected =  math.ceil(c.infected + c.infectivity*c.infected)
+    c.population = math.ceil(c.population - c.infectivity*c.infected)
     
 def change_param(c,index):
     c.socialization = min(1,c.socialization + fest_social_relation*c.festivity)
     c.infectivity = max(0,min(1,c.infectivity + infect_social_relation*c.socialization - infect_hygine_relation*c.hygine_value))
     c.money =  c.money + c.productivity*money_product_relation*c.population/population_product_relation 
-    c = travel_effect(c,index)
-    c = infect_others(c)
-    c = remove(c)
-    return c
+    travel_effect(c,index)
+    infect_others(c)
+    remove(c)
 
 
 def country_update():
     global Countries_data,player_index
     for i in range(no_of_countries):
-       
         c = Countries_data[i]
-        if(c.is_country_removed == 0):
-           c =  change_param(c,i)
-        if(c.is_country_removed == 1 or c.population <= 0):
-            c.population = 0
+        if(c.is_country_removed == 1):
+            continue
+        change_param(c,i)
+        c.population = max(0,c.population)
+        if(c.population == 0):
+            c.is_country_removed = 1
         c.population_arr.append(c.population)
         c.infected_arr.append(c.infected)
         c.dead_arr.append(c.dead)
@@ -218,7 +210,7 @@ def view_data():
        
 def change_param_user():
     #the user makes his choices to change parameters of his country 
-    print('')
+    print('5')
     
 def days():
     #view_data()
@@ -233,5 +225,3 @@ for i in range(100):
 
 # handel stop condition.
 # make sure infection never overflows
-
-    
