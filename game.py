@@ -127,6 +127,7 @@ def plot(x,label_y,is_mine,title):
 
 def travel_effect(c1,index):
     if(c1.population<0):
+        print('a')
         c1.is_country_removed = 1
         c1.population = 0
         return c1
@@ -180,6 +181,8 @@ def country_update():
         c = Countries_data[i]
         if(c.is_country_removed == 0):
            c =  change_param(c,i)
+        if(c.is_country_removed == 1 or c.population <= 0):
+            c.population = 0
         c.population_arr.append(c.population)
         c.infected_arr.append(c.infected)
         c.dead_arr.append(c.dead)
@@ -230,5 +233,5 @@ for i in range(100):
 
 # handel stop condition.
 # make sure infection never overflows
-c = Countries_data[0]
+
     
