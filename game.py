@@ -27,7 +27,7 @@ no_of_countries = 10
 
 fest_social_relation = 0.2
 money_product_relation = 2
-population_product_relation = 75000
+population_product_relation = 750
 infect_social_relation = 0.1
 infect_hygine_relation = 0.2
 lock_support_relation = 0.3
@@ -106,6 +106,8 @@ def inital_infect():
     
     
 def big_bang():
+    global  Day
+    Day = 0
     global Countries_data
     Countries_data = []
     for i in range(no_of_countries):
@@ -133,17 +135,17 @@ def plot(x,label_y,is_mine,title):
     plt.show()
 
 def travel_effect(c1,index):
+    global Countries_data
     for i in range(no_of_countries):
         if (i == index):
             continue;
         export_i = c1.export_v[i]
-        c2 = Countries_data[i]
+        c2 =  Countries_data[i]
         import_i = c2.import_v[index]
         c1.population = math.ceil(c1.population - c1.population*export_i*import_i/travel_imp_exp_val)
         c2.population = math.ceil(c2.population + c1.population*export_i*import_i/travel_imp_exp_val)
         c1.infected = math.ceil(c1.infected - c1.infected*export_i*import_i/travel_imp_exp_val)
-        c2.infected = math.ceil(c2.infected + c1.infected*export_i*import_i/travel_imp_exp_val)
-        
+        c2.infected = math.ceil(c2.infected + c1.infected*export_i*import_i/travel_imp_exp_val)        
 def remove(c):
     if(Day>3):
         temp = c.infected * random.randint(0,remove_ratio_ub*100)/100
@@ -216,12 +218,20 @@ def days():
     #view_data()
     change_param_user()
     country_update()
+    check_pop()
 
+def check_pop():
+    p =0
+    for i in range(no_of_countries):
+        p = p + Countries_data[i].population + Countries_data[i].infected + Countries_data[i].dead + Countries_data[i].recovered
+    print(str(Day)+ " : "+str(p))
+    
 big_bang()  
 choose_country()  
-for i in range(100):
+for i in range(20):
     Day = Day + 1
     days()
 
 # handel stop condition.
 # make sure infection never overflows
+c = Countries_data[0]
