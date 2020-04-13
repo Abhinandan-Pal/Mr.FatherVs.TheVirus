@@ -212,7 +212,8 @@ def view_data():
        
 def change_param_user():
     #the user makes his choices to change parameters of his country 
-    print('5')
+    print("COUNTRY "+ str(i)+"\n")
+    print(str(vars(Countries_data[i]))+"\n\n")
     
 def days():
     #view_data()
