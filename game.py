@@ -118,7 +118,7 @@ def choose_country():
     global Countries_data,player_index
     for i in range(no_of_countries):
         print("COUNTRY "+ str(i)+"\n")
-        print(str(Countries_data[i])+"\n\n")
+        print(str(vars(Countries_data[i]))+"\n\n")
     player_index = int(input("Choose Your Prefered Country : "))
     inital_infect()
     
@@ -142,8 +142,8 @@ def travel_effect(c1,index):
         export_i = c1.export_v[i]
         c2 =  Countries_data[i]
         import_i = c2.import_v[index]
-        c1.population = math.ceil(c1.population - c1.population*export_i*import_i/travel_imp_exp_val)
-        c2.population = math.ceil(c2.population + c1.population*export_i*import_i/travel_imp_exp_val)
+        c1.population = math.ceil(c1.population - c1.population*export_i*import_i/travel_imp_exp_val)*1.002
+        c2.population = math.ceil(c2.population + c1.population*export_i*import_i/travel_imp_exp_val)*1.002
         c1.infected = math.ceil(c1.infected - c1.infected*export_i*import_i/travel_imp_exp_val)
         c2.infected = math.ceil(c2.infected + c1.infected*export_i*import_i/travel_imp_exp_val)        
 def remove(c):
@@ -232,6 +232,4 @@ for i in range(20):
     Day = Day + 1
     days()
 
-# handel stop condition.
-# make sure infection never overflows
-c = Countries_data[0]
+
